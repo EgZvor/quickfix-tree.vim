@@ -78,10 +78,7 @@ function! s:format_as_tree(trie, prefix, parent_path) abort
         let next = a:trie[path]
 
         let is_last = idx == a:trie->len() - 1
-        if len(next) == 1 && len(next->values()[0]) != 0
-            " Don't print every path item separately for a single leaf.
-            let lines += s:format_as_tree(next, a:prefix, current_path)
-        elseif !is_last
+        if !is_last
             let lines += [$'{a:prefix}├── {current_path}'] + s:format_as_tree(next, normal_prefix, current_path)
         else
             let lines += [$'{a:prefix}└── {current_path}'] + s:format_as_tree(next, last_prefix, current_path)
