@@ -5,7 +5,7 @@ function! quickfix_tree#idx() abort
 endfunction
 
 function! quickfix_tree#quickfix() abort
-    call s:list(function('getqflist'))
+    call s:list(function('getqflist'), 'quickfix_tree')
 endfunction
 
 function! quickfix_tree#loclist() abort
@@ -13,10 +13,10 @@ function! quickfix_tree#loclist() abort
         return a:what == v:null ? getloclist(0) : getloclist(0, a:what)
     endfunction
 
-    call s:list(funcref('Getloclist'))
+    call s:list(funcref('Getloclist'), 'loclist_tree')
 endfunction
 
-function! s:list(getlist) abort
+function! s:list(getlist, filetype) abort
     let entries = a:getlist()
     if empty(entries)
         call s:print_err("QuickfixTree: list is empty")
@@ -25,7 +25,7 @@ function! s:list(getlist) abort
 
     let paths = map(entries, {idx, entry -> fnamemodify(bufname(entry['bufnr']), ":p:.") .. ' ' .. (idx + 1)})
     execute 'silent' s:noswapfile 'keepalt edit quickfixtree://' .. fnameescape(a:getlist({'title': 0}).title)
-    call s:init_buffer('quickfix_tree')
+    call s:init_buffer(a:filetype)
     silent keepmarks keepjumps %delete _
     let formatted = []
     for line in quickfix_tree#format#format_tree(paths)
