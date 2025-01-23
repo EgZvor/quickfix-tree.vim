@@ -21,15 +21,12 @@ endfunction
 
 " TODO: improve performance?
 function! s:collapse(root) abort
-    for subtree in a:root->values()
-        call s:collapse(subtree)
-    endfor
-
-    for [path, subtree] in a:root->items()
-        " Replace a child with its only grandchild.
-        if len(subtree) == 1
-            for [subpath, subsubtree] in subtree->items()
-                let a:root[$"{path}/{subpath}"] = subsubtree
+    for [path, child] in a:root->items()
+        call s:collapse(child)
+        " Replace a child with the only grandchild.
+        if len(child) == 1
+            for [subpath, grandchild] in child->items()
+                let a:root[$"{path}/{subpath}"] = grandchild
                 call remove(a:root, path)
             endfor
         endif
