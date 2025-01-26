@@ -1,0 +1,18 @@
+*quickfix-tree.txt*  Alternative quickfix view
+
+Author:  Egor Zvorykin egzvor[at]gmail[dot]com
+License: Same terms as Vim itself (see |license|)
+
+                                                *:QuickfixTree*
+:QuickfixTree           Open a special buffer for displaying and navigating
+                        |quickfix| entries as a tree.
+                                                *:LoclistTree*
+:LoclistTree            Same as |:QuickfixTree|, but for |location-list|.
+
+ABOUT                                           *quickfix-tree-about*
+
+Grab the latest version or report a bug on GitHub:
+
+http://github.com/egzvor/quickfix-tree.vim
+
+ vim:tw=78:et:ft=help:norl:
