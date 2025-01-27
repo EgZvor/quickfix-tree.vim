@@ -1,4 +1,8 @@
-nnoremap <buffer> <cr> <cmd>exe 'cc ' .. quickfix_tree#idx()<cr>
+vim9script
+
+import autoload '../autoload/quickfix_tree.vim'
+
+nnoremap <buffer> <cr> <scriptcmd>exe 'cc ' .. quickfix_tree.Idx()<cr>
 nnoremap <buffer> q <cmd>bdelete<cr>
 nnoremap <buffer> <up> <cmd>call search($'^.*\<\d\+$', 'bWz')<cr>
 nnoremap <buffer> <down> <cmd>call search($'^.*\<\d\+$', 'Wz')<cr>

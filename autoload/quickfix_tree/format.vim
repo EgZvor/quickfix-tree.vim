@@ -1,58 +1,79 @@
-function! quickfix_tree#format#format_tree(paths) abort
-    let tree = {}
-    for path in a:paths
-        call s:insert(tree, path)
+vim9script
+
+export def FormatTree(paths: list<string>): list<string>
+    var tree = {}
+    for path in paths
+        Insert(tree, path)
     endfor
 
-    call s:collapse(tree)
-    return s:format_tree(tree, '', '')
-endfunction
+    Collapse(tree)
+    return FormatTree_(tree, '', '')
+enddef
 
-function! s:insert(tree, path) abort
-    let cur = a:tree
-    for path_item in a:path->split('/')
+def Insert(tree: dict<any>, path: string)
+    var cur = tree
+    for path_item in path->SplitByChar('/')
         if !has_key(cur, path_item)
-            let cur[path_item] = {}
+            cur[path_item] = {}
         endif
-        let cur = cur[path_item]
+        cur = cur[path_item]
     endfor
-endfunction
+enddef
 
+def SplitByChar(line: string, sep: string): list<string>
+    var result: list<string> = []
+    var buf: string = ''
 
-" TODO: improve performance?
-function! s:collapse(root) abort
-    for [path, child] in a:root->items()
-        call s:collapse(child)
-        " Replace a child with the only grandchild.
+    for char in line
+        if char == sep
+            add(result, buf)
+            buf = ''
+            continue
+        endif
+        buf ..= char
+    endfor
+
+    if buf != ''
+        add(result, buf)
+    endif
+
+    return result
+enddef
+
+def Collapse(root: dict<any>)
+    for [path, child] in root->items()
+        Collapse(child)
+        # Replace a child with the only grandchild.
         if len(child) == 1
             for [subpath, grandchild] in child->items()
-                let a:root[$"{path}/{subpath}"] = grandchild
-                call remove(a:root, path)
+                root[$"{path}/{subpath}"] = grandchild
+                remove(root, path)
             endfor
         endif
     endfor
-endfunction
+enddef
 
-function! s:format_tree(tree, prefix, parent_path) abort
-    let lines = []
-    let normal_prefix = $'{a:prefix}│   '
-    let last_prefix = $'{a:prefix}    '
+def FormatTree_(tree: dict<any>, prefix: string, parent_path: string): list<string>
+    var lines = []
+    var normal_prefix = $'{prefix}│   '
+    var last_prefix = $'{prefix}    '
+    var current_path = ''
 
-    for [idx, path] in a:tree->keys()->sort()->map({idx, path -> [idx, path]})
-        if a:parent_path != ''
-            let current_path = $'{a:parent_path}/{path}'
+    for [idx, path] in tree->keys()->sort()->map((idx, path) => [idx, path])
+        if parent_path != ''
+            current_path = $'{parent_path}/{path}'
         else
-            let current_path = path
+            current_path = path
         endif
-        let next = a:tree[path]
+        var next = tree[path]
 
-        let is_last = idx == a:tree->len() - 1
+        var is_last = idx == tree->len() - 1
         if !is_last
-            let lines += [$'{a:prefix}├── {current_path}'] + s:format_tree(next, normal_prefix, current_path)
+            lines += [$'{prefix}├── {current_path}'] + FormatTree_(next, normal_prefix, current_path)
         else
-            let lines += [$'{a:prefix}└── {current_path}'] + s:format_tree(next, last_prefix, current_path)
+            lines += [$'{prefix}└── {current_path}'] + FormatTree_(next, last_prefix, current_path)
         endif
     endfor
 
     return lines
-endfunction
+enddef

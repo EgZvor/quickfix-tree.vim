@@ -1,60 +1,63 @@
-let s:noswapfile = (2 == exists(':noswapfile')) ? 'noswapfile' : ''
+vim9script
 
-function! quickfix_tree#idx() abort
+import autoload './quickfix_tree/format.vim'
+
+var noswapfile = (2 == exists(':noswapfile')) ? 'noswapfile' : ''
+
+export def Idx(): string
     return matchstr(getline('.'), '\d\+$')
-endfunction
+enddef
 
-function! quickfix_tree#quickfix() abort
-    call s:list(function('getqflist'), 'quickfix_tree')
-endfunction
+export def Quickfix()
+    List(function('getqflist'), 'quickfix_tree')
+enddef
 
-function! quickfix_tree#loclist() abort
-    function! Getloclist(what = v:null) abort
-        return a:what == v:null ? getloclist(0) : getloclist(0, a:what)
-    endfunction
+export def Loclist()
+    List(function('getloclist', [0]), 'loclist_tree')
+enddef
 
-    call s:list(funcref('Getloclist'), 'loclist_tree')
-endfunction
-
-function! s:list(getlist, filetype) abort
-    let entries = a:getlist()
+def List(GetList: any, filetype: string)
+    var entries = GetList()
     if empty(entries)
-        call s:print_err("QuickfixTree: list is empty")
+        PrintErr("QuickfixTree: list is empty")
         return
     endif
 
-    let paths = map(entries, {idx, entry -> fnamemodify(bufname(entry['bufnr']), ":p:.") .. ' ' .. (idx + 1)})
-    execute 'silent' s:noswapfile 'keepalt edit quickfixtree://' .. fnameescape(a:getlist({'title': 0}).title)
-    call s:init_buffer(a:filetype)
-    silent keepmarks keepjumps %delete _
-    let formatted = []
-    for line in quickfix_tree#format#format_tree(paths)
-        call add(formatted, substitute(
-\            line,
-\            '\(.*\s\+\)\(\d\+\)$',
-\            {m -> m[1] .. '|| ' .. a:getlist()[m[2]-1]['text'] .. ' || ' .. m[2]},
-\            ''
-\         ))
+    var paths: list<string> = mapnew(entries, (idx: number, entry: dict<any>): string =>
+        fnamemodify(bufname(entry['bufnr']), ":p:.") .. ' ' .. string(idx + 1)
+    )
+    :execute $'silent {noswapfile} keepalt edit quickfixtree://' .. fnameescape(GetList({'title': 0}).title)
+    InitBuffer(filetype)
+    :silent keepmarks keepjumps :%delete _
+    var formatted = []
+    for line in format.FormatTree(paths)
+        add(formatted, substitute(
+             line,
+             '\v(.*\s+)(\d+)$',
+             (m) => m[1] .. '|| ' .. entries[str2nr(m[2]) - 1]['text'] .. ' || ' .. m[2],
+             ''
+          ))
     endfor
-    silent keepmarks keepjumps call setline(1, formatted)
-    call s:jump_to_idx(a:getlist({'idx' : 0}).idx)
-endfunction
+    :silent keepmarks keepjumps call setline(1, formatted)
+    JumpToIdx(GetList({'idx': 0}).idx)
+enddef
 
-function! s:print_err(msg)
+def PrintErr(msg: string)
     echohl ErrorMsg
-    echo a:msg
+    echo msg
     echohl None
-endfunction
+enddef
 
-function! s:init_buffer(filetype)
-    exe 'setfiletype ' .. a:filetype
+def InitBuffer(filetype: string)
+    setlocal nomodeline
+    exe 'setfiletype ' .. filetype
     setlocal nowrap
     setlocal cursorline
     setlocal nobuflisted
     setlocal buftype=nofile noswapfile
-endfunction
+enddef
 
-function! s:jump_to_idx(idx) abort
-    call search($'\<{a:idx}$')
+def JumpToIdx(idx: number)
+    search($'\<{idx}$')
     normal! ^
-endfunction
+enddef
