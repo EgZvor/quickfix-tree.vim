@@ -5,7 +5,12 @@ import autoload './quickfix_tree/format.vim'
 var noswapfile = (2 == exists(':noswapfile')) ? 'noswapfile' : ''
 
 export def Idx(): string
-    return matchstr(getline('.'), '\d\+$')
+    var idx = matchstr(getline('.'), '\d\+$')
+    if idx == ''
+        echoerr 'no index on the current line'
+    endif
+
+    return idx
 enddef
 
 export def Quickfix()
