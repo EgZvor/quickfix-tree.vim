@@ -13,7 +13,7 @@ export def Quickfix()
 enddef
 
 export def Loclist()
-    List(function('getloclist', [0]), 'loclist_tree')
+    List(function('getloclist', [0]), 'quickfix_tree.loclist_tree')
 enddef
 
 def List(GetList: any, filetype: string)
