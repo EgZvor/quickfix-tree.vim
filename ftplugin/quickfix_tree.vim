@@ -19,3 +19,4 @@ enddef
 
 set foldmethod=expr
 set foldexpr=s:QuickfixTreeFoldLevel()
+&foldtext = "getline(v:foldstart)->matchstr('\\v^[[:space:]─└├│]+') .. $' {(v:foldend - v:foldstart + 1)} lines '"
