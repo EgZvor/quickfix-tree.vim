@@ -4,10 +4,4 @@ This plugin allows to display quickfix list as a tree.
 
 Use `:QuickfixTree` command to open a scratch buffer with current quickfix list shown as a tree.
 
-<p align="center">
-  <img
-     src="https://gist.github.com/user-attachments/assets/e7eea68b-efb4-486b-9798-ec1dee48462a"
-     alt="quickfix list shown as a file tree"
-     >
-  </img>
-</p>
+![quickfix list shown as a file tree](https://github-production-user-asset-6210df.s3.amazonaws.com/11237935/411356827-e7eea68b-efb4-486b-9798-ec1dee48462a.png | width=200).
