@@ -2,13 +2,21 @@ vim9script
 
 import autoload '../autoload/quickfix_tree.vim'
 
-nnoremap <buffer> <cr> <scriptcmd>exe 'cc ' .. quickfix_tree.Idx()<cr>
-nnoremap <buffer> q <cmd>bdelete<cr>
+nnoremap <buffer> <Plug>(quickfix_tree_select) <scriptcmd>exe 'cc ' .. quickfix_tree.Idx()<cr>
+nnoremap <buffer> <Plug>(quickfix_tree_up) <up><Plug>(_quickfix_tree_up)
+nnoremap <buffer> <Plug>(quickfix_tree_down) <down><Plug>(_quickfix_tree_down)
+nmap <buffer> <expr> <Plug>(_quickfix_tree_up) StopAtLine() ? '' : '<up><Plug>(_quickfix_tree_up)'
+nmap <buffer> <expr> <Plug>(_quickfix_tree_down) StopAtLine() ? '' : '<down><Plug>(_quickfix_tree_down)'
 
-nmap <buffer> <expr> <Plug>(quickfix_tree_up) StopAtLine() ? '' : '<up><Plug>(quickfix_tree_up)'
-nnoremap <buffer> <up> <up><Plug>(quickfix_tree_up)
-nmap <buffer> <expr> <Plug>(quickfix_tree_down) StopAtLine() ? '' : '<down><Plug>(quickfix_tree_down)'
-nnoremap <buffer> <down> <down><Plug>(quickfix_tree_down)
+if !exists('g:quickfix_tree_disable_mappings')
+    nnoremap <buffer> q <cmd>bdelete<cr>
+    nnoremap <buffer> <cr> <Plug>(quickfix_tree_select)
+
+    nnoremap <buffer> <up> <Plug>(quickfix_tree_up)
+    nnoremap <buffer> <down> <Plug>(quickfix_tree_down)
+    nnoremap <buffer> k <Plug>(quickfix_tree_up)
+    nnoremap <buffer> j <Plug>(quickfix_tree_down)
+endif
 
 def StopAtLine(): bool
     return foldclosed(line('.')) != -1 || match(getline('.'), '^.*\<\d\+$') >= 0

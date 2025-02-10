@@ -12,6 +12,26 @@ COMMANDS
 :LoclistTree            Same as |:QuickfixTree|, but for |location-list|.
 
 ==============================================================================
+MAPPINGS                                        *quickfix-tree-mappings*
+
+                                                *g:quickfix_tree_disable_mappings*
+To disable default local mappings in special buffers declare the variable in
+your vimrc. >vim
+
+    let g:quickfix_tree_disable_mappings = 1
+<
+In after/ftplugin/quickfix_tree.vim (see |ftplugin|) define your own
+mappings >vim
+
+    nnoremap <buffer> <up> <Plug>(quickfix_tree_up)
+    nnoremap <buffer> <down> <Plug>(quickfix_tree_down)
+    nnoremap <buffer> k <Plug>(quickfix_tree_up)
+    nnoremap <buffer> j <Plug>(quickfix_tree_down)
+    nnoremap <buffer> q <cmd>bdelete<cr>
+    nnoremap <buffer> <cr> <Plug>(quickfix_tree_select)
+<
+
+==============================================================================
 FOLDING                                         *quickfix-tree-folding*
 
 Both quickfix_tree and loclist_tree filetypes introduced by the plugin set up
