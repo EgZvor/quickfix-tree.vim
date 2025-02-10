@@ -3,12 +3,22 @@
 Author:  Egor Zvorykin egzvor[at]gmail[dot]com
 License: Same terms as Vim itself (see |license|)
 
+==============================================================================
+COMMANDS
                                                 *:QuickfixTree*
 :QuickfixTree           Open a special buffer for displaying and navigating
                         |quickfix| entries as a tree.
                                                 *:LoclistTree*
 :LoclistTree            Same as |:QuickfixTree|, but for |location-list|.
 
+==============================================================================
+FOLDING                                         *quickfix-tree-folding*
+
+Both quickfix_tree and loclist_tree filetypes introduced by the plugin set up
+a folding expression to fold directories in a tree. Try |zc| and |zo| to close
+and open a fold. See |folding| for more.
+
+==============================================================================
 ABOUT                                           *quickfix-tree-about*
 
 Grab the latest version or report a bug on GitHub:
